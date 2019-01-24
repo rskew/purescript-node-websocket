@@ -7,13 +7,9 @@
     "output"
   ],
   "dependencies": {
-    "purescript-prelude": "^3.1.1",
-    "purescript-console": "^3.0.0",
-    "purescript-node-http": "^4.2.0"
-  },
-  "devDependencies": {
-    "purescript-psci-support": "^3.0.0",
-    "purescript-refs": "^3.0.0"
+    "purescript-prelude": "^4.1.0",
+    "purescript-console": "^4.2.0",
+    "purescript-node-http": "git://github.com/purescript-node/purescript-node-http#a46ebd999fafddac7979f83311f1e545868cbea0"
   },
   "repository": {
     "type": "git",

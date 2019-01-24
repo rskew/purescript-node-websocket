@@ -29,13 +29,13 @@ module Node.Websocket.Connection
   ) where
 
 import Prelude
+import Effect (Effect)
+import Effect.Exception (Error)
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (Error)
 import Data.Either (Either(..))
 import Data.Nullable (Nullable)
 import Node.Buffer (Buffer)
-import Node.Websocket.Types (BinaryFrame(..), CloseDescription, CloseReason, TextFrame(..), WSConnection, WSFrame, WSSERVER)
+import Node.Websocket.Types (BinaryFrame(..), CloseDescription, CloseReason, TextFrame(..), WSConnection, WSFrame)
 
 foreign import closeDescription :: WSConnection -> Nullable CloseDescription
 
@@ -52,51 +52,51 @@ foreign import webSocketVersion :: WSConnection -> Number
 
 foreign import connected :: WSConnection -> Boolean
 
-foreign import closeWithReason :: forall e. WSConnection -> CloseReason -> CloseDescription -> Eff (wss :: WSSERVER | e) Unit
+foreign import closeWithReason :: WSConnection -> CloseReason -> CloseDescription -> Effect Unit
 
-foreign import close :: forall e. WSConnection -> Eff (wss :: WSSERVER | e) Unit
+foreign import close :: WSConnection -> Effect Unit
 
 -- | See https://github.com/theturtle32/WebSocket-Node/blob/master/docs/WebSocketConnection.md#dropreasoncode-description
-foreign import drop :: forall e. WSConnection -> CloseReason -> CloseDescription -> Eff (wss :: WSSERVER | e) Unit
+foreign import drop :: WSConnection -> CloseReason -> CloseDescription -> Effect Unit
 
-foreign import sendUTF :: forall e. WSConnection -> String -> Eff (wss :: WSSERVER | e) Unit
+foreign import sendUTF :: WSConnection -> String -> Effect Unit
 
-foreign import sendBytes :: forall e. WSConnection -> Buffer -> Eff (wss :: WSSERVER | e) Unit
+foreign import sendBytes :: WSConnection -> Buffer -> Effect Unit
 
-sendMessage :: forall e. WSConnection -> Either TextFrame BinaryFrame -> Eff (wss :: WSSERVER | e) Unit
+sendMessage :: WSConnection -> Either TextFrame BinaryFrame -> Effect Unit
 sendMessage conn = case _ of
   Left (TextFrame msg) -> sendUTF conn msg.utf8Data
   Right (BinaryFrame msg) -> sendBytes conn msg.binaryData
 
-foreign import ping :: forall e. WSConnection -> Buffer -> Eff (wss :: WSSERVER | e) Unit
+foreign import ping :: WSConnection -> Buffer -> Effect Unit
 
-foreign import pong :: forall e. WSConnection -> Buffer -> Eff (wss :: WSSERVER | e) Unit
+foreign import pong :: WSConnection -> Buffer -> Effect Unit
 
-foreign import sendFrame :: forall e. WSConnection -> WSFrame -> Eff (wss :: WSSERVER | e) Unit
+foreign import sendFrame :: WSConnection -> WSFrame -> Effect Unit
 
-type MessageCallback e = Either TextFrame BinaryFrame -> Eff (wss :: WSSERVER | e) Unit
+type MessageCallback = Either TextFrame BinaryFrame -> Effect Unit
 
-foreign import onMessageImpl :: forall a b e. (a -> Either a b) -> (b -> Either a b) -> WSConnection -> MessageCallback e -> Eff (wss :: WSSERVER | e) Unit
+foreign import onMessageImpl :: forall a b. (a -> Either a b) -> (b -> Either a b) -> WSConnection -> MessageCallback -> Effect Unit
 
-onMessage :: forall e. WSConnection -> MessageCallback e -> Eff (wss :: WSSERVER | e) Unit
+onMessage :: WSConnection -> MessageCallback -> Effect Unit
 onMessage = onMessageImpl Left Right
 
-type FrameCallback e = WSFrame -> Eff (wss :: WSSERVER | e) Unit
+type FrameCallback = WSFrame -> Effect Unit
 
-foreign import onFrame :: forall e. WSConnection -> FrameCallback e -> Eff (wss :: WSSERVER | e) Unit
+foreign import onFrame :: WSConnection -> FrameCallback -> Effect Unit
 
-type CloseCallback e = CloseReason -> CloseDescription -> Eff (wss :: WSSERVER | e) Unit
+type CloseCallback = CloseReason -> CloseDescription -> Effect Unit
 
-foreign import onClose :: forall e. WSConnection -> CloseCallback e -> Eff (wss :: WSSERVER | e) Unit
+foreign import onClose :: WSConnection -> CloseCallback -> Effect Unit
 
-type ErrorCallback e = Error -> Eff (wss :: WSSERVER | e) Unit
+type ErrorCallback = Error -> Effect Unit
 
-foreign import onError :: forall e. WSConnection -> ErrorCallback e -> Eff (wss :: WSSERVER | e) Unit
+foreign import onError :: WSConnection -> ErrorCallback -> Effect Unit
 
-type PingCallback e = Buffer -> Eff (wss :: WSSERVER | e) Unit -> Eff (wss :: WSSERVER | e) Unit
+type PingCallback = Buffer -> Effect Unit -> Effect Unit
 
-foreign import onPing :: forall e. WSConnection -> PingCallback e -> Eff (wss :: WSSERVER | e) Unit
+foreign import onPing :: WSConnection -> PingCallback -> Effect Unit
 
-type PongCallback e = Buffer -> Eff (wss :: WSSERVER | e) Unit
+type PongCallback = Buffer -> Effect Unit
 
-foreign import onPong :: forall e. WSConnection -> PongCallback e -> Eff (wss :: WSSERVER | e) Unit
+foreign import onPong :: WSConnection -> PongCallback -> Effect Unit

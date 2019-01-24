@@ -1,14 +1,9 @@
 module Node.Websocket.Types where
 
-import Control.Monad.Eff (kind Effect)
-import Data.Foreign (Foreign, toForeign)
+import Foreign (Foreign, unsafeToForeign)
 import Data.Newtype (class Newtype)
 import Node.Buffer (Buffer)
 import Node.HTTP (Server)
-
-foreign import data WSSERVER :: Effect
-
-foreign import data WSCLIENT :: Effect
 
 foreign import data WSServer :: Type
 
@@ -95,7 +90,7 @@ defaultClientConfig =
   , fragmentationThreshold: 0x4000
   , assembleFragments: true
   , closeTimeout: 5000
-  , tlsOptions: toForeign {}
+  , tlsOptions: unsafeToForeign {}
   }
 
 data OpCode
