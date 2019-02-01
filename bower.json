@@ -9,7 +9,7 @@
   "dependencies": {
     "purescript-prelude": "^4.1.0",
     "purescript-console": "^4.2.0",
-    "purescript-node-http": "git://github.com/purescript-node/purescript-node-http#a46ebd999fafddac7979f83311f1e545868cbea0"
+    "purescript-node-http": "^5.0.0"
   },
   "repository": {
     "type": "git",
